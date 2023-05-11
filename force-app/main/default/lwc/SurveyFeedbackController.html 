@@ -1,0 +1,62 @@
+<template>
+    <lightning-card title="Survey Feedback">
+        <div class="slds-grid slds-wrap">
+            <template for:each={questions} for:item="question">
+                <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-3">
+                    <lightning-input type={question.type} label={question.label} value={question.value} key={question.key} onchange={handleQuestionChange}>
+                        <template if:true={question.choices}>
+                            <template for:each={question.choices} for:item="choice">
+                                <lightning-input-option key={choice.key} value={choice.value} label={choice.label}></lightning-input-option>
+                            </template>
+                        </template>
+                    </lightning-input>
+                </div>
+            </template>
+        </div>
+        <div class="slds-m-top_medium">
+            <lightning-button variant="brand" label="Submit" title="Submit" onclick={handleSubmit}></lightning-button>
+        </div>
+    </lightning-card>
+</template>
+
+<script>
+import {LightningElement,api} from 'lwc';
+
+export default class SurveyFeedback extends LightningElement {
+    questions;
+    @api
+    get survey() {
+        return this.questions;
+    }
+    set survey(value) {
+        this.questions = value;
+    }
+
+    // Handle question change
+    handleQuestionChange() {
+        // Get the questions from the form
+        const allQuestions = this.template.querySelectorAll('lightning-input');
+        // Map the questions to an array of questions
+        this.questions = [...allQuestions].map(question => {
+            return {
+                key: question.key,
+                type: question.type,
+                label: question.label,
+                value: question.value,
+                choices: question.choices
+            };
+        });
+    }
+
+    // Handle submit
+    handleSubmit() {
+        // Create the survey response object
+        const surveyResponse = {
+            questions: this.questions
+        };
+
+        // Fire the submit event
+        this.dispatchEvent(new CustomEvent('submit', { detail: surveyResponse }));
+    }
+}
+</script>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>48.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Survey Feedback</masterLabel>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__RecordPage,lightning__HomePage">
+            <property name="surveyId" type="String" label="Survey Id" default="" required="true"/>
+        </targetConfig>
+    </targetConfigs>
+    <LightningComponent>
+        <aura:component>
+            <aura:attribute name="questions" type="Object[]"/>
+            <aura:attribute name="surveyId" type="String"/>
+            <aura:attribute name="responses" type="Object"/>
+            <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+            <aura:iteration items="{!v.questions}" var="question">
+                <div>
+                    <p>{!question.Name}</p>
+                    <aura:if isTrue="{!question.Type__c == 'Text'}">
+                        <lightning:input type="text" label="Answer" aura:id="answer"/>
+                    </aura:if>
+                    <aura:if isTrue="{!question.Type__c == 'Single Choice'}">
+                        <lightning:select label="Answer" aura:id="answer">
+                            <aura:iteration items="{!question.Choices__r}" var="choice">
+                                <option value="{!choice.Id}">{!choice.Name}</option>
+                            </aura:iteration>
+                        </lightning:select>
+                    </aura:if>
+                    <aura:if isTrue="{!question.Type__c == 'Multi Choice'}">
+                        <lightning:dualListbox label="Answer" sourceLabel="Available" selectedLabel="Selected" aura:id="answer" options="{!question.Choices__r}"/>
+                    </aura:if>
+                    <aura:if isTrue="{!question.Type__c == 'Rating'}">
+                        <lightning:rating label="Answer" aura:id="answer" min="1" max="5"/>
+                    </aura:if>
+                </div>
+            </aura:iteration>
+            <lightning:button variant="brand" label="Submit" onclick="{!c.handleSubmit}"/>
+        </aura:component>
+    </LightningComponent>
+    <LightningComponentBundle>
+        <controller>
+            doInit: function(cmp, evt, hlp) {
+                var action = cmp.get('c.getSurveyQuestions');
+                action.setParams({
+                    surveyId: cmp.get('v.surveyId')
+                });
+                action.setCallback(this, function(response) {
+                    var state = response.getState();
+                    if (state === 'SUCCESS') {
+                        cmp.set('v.questions', response.getReturnValue());
+                    } else if (state === 'ERROR') {
+                        var errors = response.getError();
+                        console.error(errors);
+                    }
+                });
+                $A.enqueueAction(action);
+            },
+            handleSubmit: function(cmp, evt, hlp) {
+                var questions = cmp.get('v.questions');
+                var responses = {};
+                for (var i = 0; i < questions.length; i++) {
+                    var qId = questions[i].Id;
+                    var answer = cmp.find('answer').get('v.value');
+                    responses[qId] = answer;
+                }
+                cmp.set('v.responses', responses);
+                var action = cmp.get('c.saveSurveyResponse');
+                action.setParams({
+                    surveyId: cmp.get('v.surveyId'),
+                    responses: cmp.get('v.responses')
+                });
+                action
