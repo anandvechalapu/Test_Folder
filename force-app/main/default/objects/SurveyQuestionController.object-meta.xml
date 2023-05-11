@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Survey Question Object</description>
+    <enableActivities>false</enableActivities>
+    <fields>
+        <fullName>Survey_Questions__c</fullName>
+        <externalId>false</externalId>
+        <label>Survey Questions</label>
+        <length>80</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <defaultValue>SQ-{00001}</defaultValue>
+        <description>Unique identifier</description>
+        <externalId>false</externalId>
+        <fullName>Survey_Questions_Number__c</fullName>
+        <label>Survey Questions Number</label>
+        <startingNumber>1</startingNumber>
+        <trackTrending>false</trackTrending>
+        <type>AutoNumber</type>
+    </fields>
+    <fields>
+        <description>Question Name</description>
+        <externalId>false</externalId>
+        <fullName>Question_Name__c</fullName>
+        <label>Question Name</label>
+        <length>80</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+    </fields>
+    <fields>
+        <description>Question Type</description>
+        <externalId>false</externalId>
+        <fullName>Question_Type__c</fullName>
+        <label>Question Type</label>
+        <picklist>
+            <picklistValues>
+                <fullName>Single_Choice</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Multi_Choice</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Text</fullName>
+                <default>false</default>
+            </picklistValues>
+            <picklistValues>
+                <fullName>Rating</fullName>
+                <default>false</default>
+            </picklistValues>
+        </picklist>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+    </fields>
+    <fields>
+        <description>Survey</description>
+        <externalId>false</externalId>
+        <fullName>Survey__c</fullName>
+        <label>Survey</label>
+        <referenceTo>Survey__c</referenceTo>
+        <relationshipLabel>Surveys</relationshipLabel>
+        <relationshipName>Survey_Survey_Questions</relationshipName>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <label>Survey Questions</label>
+    <listViews>
+        <fullName>All_Survey_Questions</fullName>
+        <columns>Survey_Questions_Number__c</columns>
+        <columns>Survey_Questions__c</columns>
+        <columns>Question_Name__c</columns>
+        <columns>Question_Type__c</columns>
+        <columns>Survey__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All Survey Questions</label>
+    </listViews>
+    <pageLayouts>
+        <fullName>Survey_Questions_Page_Layout</fullName>
+        <availableForNew>true</availableForNew>
+        <label>Survey Questions Page Layout</label>
+        <sections>
+            <label>Survey Questions</label>
+            <layoutRows>
+                <layoutItems>
+                    <behavior>Required</behavior>
+                    <field>Survey_Questions_Number__c</field>
+                </layoutItems>
+                <layoutItems>
+                    <behavior>Required</behavior>
+                    <field>Survey_Questions__c</field>
+                </layoutItems>
+            </
